@@ -1,54 +1,150 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
-    <link rel="stylesheet" type="text/css" href="/asset/style/index.css">
+    <link rel="stylesheet" type="text/css" href="/asset/style/common.css">
     <link rel="stylesheet" type="text/css" href="/asset/style/font-awesome.min.css">
+    <script src="/asset/script/axios.min.js"></script>
     <script src="/asset/script/vue.min.js"></script>
     <script src="/asset/script/vue-pythonpad-runner.bundle.js"></script>
+    <script src="/asset/script/common.js"></script>
     <script>
         Vue.component('pythonpad-runner', VuePythonpadRunner)
     </script>
+    <title>Pythonpad Demo</title>
 </head>
 
 <body>
-    <div class="app" id="app">
-        <pythonpad-runner :locale="locale" :brython-static-url="brythonStaticUrl" :static-url="staticUrl"
-            :init-src="code" :init-files="files" @save="handleSave"></pythonpad-runner>
+    <div class="main-layout" id="app">
+        <header class="header">
+            <div class="header-group">
+                <div class="header-item header-title">
+                    PythonPad Demo
+                </div>
+                <div class="header-item">
+                    <a class="button" href="/doc.html?p=index.md">Home</a>
+                </div>
+                <div class="header-item">
+                    <a class="button" href="/pad.html?p=sandbox.json">Sandbox</a>
+                </div>
+            </div>
+            <div class="header-group">
+                <div class="header-item">
+                    <a class="button is-danger" @click="handleReset">Reset Code</a>
+                </div>
+            </div>
+        </header>
+        <div class="app">
+            <div v-if="isError">
+                Failed to load.
+            </div>
+            <div v-else-if="isLoading">
+                <i class="fa fa-circle-o-notch fa-spin"></i>
+            </div>
+            <pythonpad-runner 
+                v-else
+                :locale="locale" 
+                :brython-static-url="brythonStaticUrl" 
+                :static-url="staticUrl"
+                :init-src="src" 
+                :init-files="files" 
+                @edit-code="handleEdit"
+                @edit-files="handleEdit"
+                @save="handleSave"
+                @share="handleShare"
+            ></pythonpad-runner>
+        </div>
     </div>
     <script>
         new Vue({
             el: '#app',
             data: {
+                isLoading: true,
+                isError: false,
+                isSaved: true,
                 locale: 'en',
                 brythonStaticUrl: '/asset/script',
                 staticUrl: '/asset/script',
                 hangerUrl: null,
-                code: localStorage.getItem('saved-code') || '',
-                files: JSON.parse(localStorage.getItem('saved-files')) || {
-                    'input.txt': {
-                        type: 'text',
-                        body: 'this file is for test\nhello world',
-                    },
-                    'asset.txt': {
-                        type: 'text',
-                        body: 'how do you do?',
-                    }
-                }
+                src: null,
+                files: null,
             },
             mounted() {
-
+                window.addEventListener('beforeunload', e => {
+                    if (!this.isSaved) {
+                        e.preventDefault();
+                        // Chrome requires returnValue to be set
+                        e.returnValue = '';
+                    }
+                });
+                this.initContent()
             },
             methods: {
+                async initContent() {
+                    this.loadContent()
+                    if (this.src === null && this.files === null) {
+                        await this.fetchContent()
+                    }
+                    this.isLoading = false
+                },
+                loadContent() {
+                    const params = window.getSearchParameters()
+                    const srcKey = `pad-${params.p}-src`
+                    const filesKey = `pad-${params.p}-files`
+                    this.src = localStorage.getItem(srcKey)
+                    this.files = JSON.parse(localStorage.getItem(filesKey))
+                },
+                async fetchContent() {
+                    const params = window.getSearchParameters()
+                    try {
+                        const res = await axios.get(`/pad/${params.p}`)
+                        const pad = res.data
+                        this.src = pad.src
+                        this.files = pad.files
+                    } catch (err) {
+                        console.error(err)
+                        this.isError = true
+                    }
+                    const srcKey = `pad-${params.p}-src`
+                    const filesKey = `pad-${params.p}-files`
+                    localStorage.setItem(srcKey, this.src)
+                    localStorage.setItem(filesKey, JSON.stringify(this.files))
+                },
                 handleSave(save, done) {
+                    const params = window.getSearchParameters()
+                    const srcKey = `pad-${params.p}-src`
+                    const filesKey = `pad-${params.p}-files`
                     if (save.code) {
-                        localStorage.setItem('saved-code', save.code)
+                        localStorage.setItem(srcKey, save.code)
                     }
                     if (save.files) {
-                        localStorage.setItem('saved-files', JSON.stringify(save.files))
+                        localStorage.setItem(filesKey, JSON.stringify(save.files))
                     }
+                    this.isSaved = true
                     done()
-                }
+                },
+                handleShare() {
+                    const answer = confirm('URL Sharing is not supported in this static website. Would you like to download your state as a file instead?')  
+                    if (answer) {
+                        const params = window.getSearchParameters()
+                        const srcKey = `pad-${params.p}-src`
+                        const filesKey = `pad-${params.p}-files`
+                        const src = localStorage.getItem(srcKey)
+                        const files = JSON.parse(localStorage.getItem(filesKey))
+                        window.downloadTextAsFile('pad.json', JSON.stringify({ src, files }))
+                    }
+                },
+                handleEdit() {
+                    this.isSaved = false
+                },
+                async handleReset() {
+                    const answer = confirm('Do you really want to reset your pad? All modifications will be lost.')  
+                    if (answer) {
+                        this.isLoading = true
+                        await this.fetchContent()
+                        this.isLoading = false
+                    }
+                },
             }
         })
     </script>

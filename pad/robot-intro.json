@@ -1,0 +1,4 @@
+{
+    "src": "from cs1robots import *\ncreate_world()\nbot = Robot()\nbot.move()",
+    "files": {}
+}

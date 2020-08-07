@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/asset/style/common.css">
+    <link rel="stylesheet" type="text/css" href="/asset/style/font-awesome.min.css">
+    <script src="/asset/script/axios.min.js"></script>
+    <script src="/asset/script/vue.min.js"></script>
+    <script src="/asset/script/vue-markdown.js"></script>
+    <script src="/asset/script/common.js"></script>
+    <script>
+        Vue.use(VueMarkdown)
+    </script>
+    <title>Pythonpad Demo</title>
+</head>
+
+<body>
+    <div class="main-layout">
+        <header class="header">
+            <div class="header-group">
+                <div class="header-item header-title">
+                    PythonPad Demo
+                </div>
+                <div class="header-item">
+                    <a class="button" href="/doc.html?p=index.md">Home</a>
+                </div>
+                <div class="header-item">
+                    <a class="button" href="/pad.html?p=sandbox.json">Sandbox</a>
+                </div>
+            </div>
+            <div class="header-group">
+    
+            </div>
+        </header>
+        <div class="content" id="app">
+            <vue-markdown v-if="source !== null" :source="source"></vue-markdown>
+            <div v-else>
+                <i class="fa fa-circle-o-notch fa-spin"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                source: null,
+            },
+            mounted() {
+                this.loadContent()
+            },
+            methods: {
+                async loadContent() {
+                    const params = window.getSearchParameters()
+                    try {
+                        const res = await axios.get(`/doc/${params.p}`)
+                        this.source = res.data
+                    } catch (err) {
+                        this.source = 'Failed to load.'
+                    }
+                },
+            }
+        })
+    </script>
+</body>
+
+</html>

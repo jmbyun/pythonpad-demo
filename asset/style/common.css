@@ -1,0 +1,136 @@
+@import url('https://fonts.googleapis.com/css?family=Lato');
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+}
+
+html:lang(ko) {
+    font-family: 'Nanum Gothic', sans-serif;
+}
+
+html:lang(en) {
+    font-family: 'Lato', sans-serif;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+[v-cloak] {
+    display: none !important;
+}
+
+body {
+    background-color: #ffffff;
+}
+
+.main-layout {
+    position: relative;
+    padding: 3rem 0 0 0;
+}
+
+.header {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    flex-flow: row nowrap;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3rem;
+    width: 100%;
+    background-color: #444444;
+    color: #ffffff;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 900;
+}
+
+.header-group {
+    display: flex;
+    padding: 0 0.3rem;
+    flex-flow: row nowrap;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-item {
+    flex: 0 0 auto;
+    padding: 0 0.2rem;
+    font-size: 1rem;
+}
+
+.header-title {
+    font-weight: bold;
+    padding-right: 1rem;
+}
+
+.header-subtitle {
+    
+}
+
+.button {
+    border: 0;
+    border-radius: 3px;
+    padding: 0.5rem 1rem;
+    background-color: #333333; /* primary-dark color */
+    font-size: 0.8rem;
+    color: #fff;
+    cursor: pointer;
+    outline: none;
+}
+
+a.button {
+    display: inline-block;
+    text-decoration: none;
+    margin-right: 0.2rem;
+}
+
+.button.is-primary {
+    background-color: #2b73f5; /* primary color */
+}
+
+.button.is-danger {
+    background-color: #a43d3d; /* danger color */
+}
+
+.button:hover {
+    opacity: 0.7;
+}
+
+.app {
+    position: absolute;
+    width: 100vw;
+    height: calc(100vh - 3rem);
+}
+
+.content {
+    margin: 0 auto;
+    padding: 1rem 1rem;
+    max-width: 800px;
+    color: #222222;
+}
+
+@media (max-width: 480px) {
+    .main-layout {
+        width: auto;
+        height: auto;
+    }
+
+    .app {
+        position: relative;
+        width: auto;
+        height: auto;
+    }
+}
