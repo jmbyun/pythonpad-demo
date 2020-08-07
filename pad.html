@@ -19,12 +19,12 @@
         <header class="header">
             <div class="header-group">
                 <div class="header-item header-title">
-                    PythonPad Demo
+                    {{ title }}
                 </div>
-                <div class="header-item">
+                <div v-if="!isEmbed" class="header-item">
                     <a class="button" href="/doc.html?p=index.md">Home</a>
                 </div>
-                <div class="header-item">
+                <div v-if="!isEmbed" class="header-item">
                     <a class="button" href="/pad.html?p=sandbox.json">Sandbox</a>
                 </div>
             </div>
@@ -59,9 +59,11 @@
         new Vue({
             el: '#app',
             data: {
+                title: 'PythonPad Demo',
                 isLoading: true,
                 isError: false,
                 isSaved: true,
+                isEmbed: false,
                 locale: 'en',
                 brythonStaticUrl: '/asset/script',
                 staticUrl: '/asset/script',
@@ -78,6 +80,7 @@
                     }
                 });
                 this.initContent()
+                this.setData()
             },
             methods: {
                 async initContent() {
@@ -86,6 +89,15 @@
                         await this.fetchContent()
                     }
                     this.isLoading = false
+                },
+                setData() {
+                    const params = window.getSearchParameters()
+                    if (params.embed) {
+                        this.isEmbed = true
+                    }
+                    if (params.title) {
+                        this.title = decodeURIComponent(params.title)
+                    }
                 },
                 loadContent() {
                     const params = window.getSearchParameters()

@@ -32,10 +32,12 @@
     
             </div>
         </header>
-        <div class="content" id="app">
-            <vue-markdown v-if="source !== null" :source="source"></vue-markdown>
-            <div v-else>
-                <i class="fa fa-circle-o-notch fa-spin"></i>
+        <div class="container" id="app">
+            <div class="content">
+                <vue-markdown v-if="source !== null" :source="source"></vue-markdown>
+                <div v-else>
+                    <i class="fa fa-circle-o-notch fa-spin"></i>
+                </div>
             </div>
         </div>
     </div>
