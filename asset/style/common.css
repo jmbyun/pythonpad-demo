@@ -34,6 +34,10 @@ body {
     background-color: #ffffff;
 }
 
+.dark-background {
+    background-color: #222222;
+}
+
 .main-layout {
     position: relative;
     padding: 3rem 0 0 0;
@@ -125,6 +129,11 @@ a.button {
 .content a {
     text-decoration: underline;
     color: #2b73f5;
+}
+
+iframe {
+    width: 100% !important;
+    max-width: 840px !important;
 }
 
 @media (max-width: 480px) {
