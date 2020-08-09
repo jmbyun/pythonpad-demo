@@ -2,6 +2,8 @@
 
 Pythonpad is a JavaScript-based python programming environment that supports users to work on hands-on programming exercises with GUI and File I/O on static websites using Python code.
 
+This demo website is hosted as GitHub Pages from [this repository](https://github.com/jmbyun/pythonpad-demo). So it's really a static website.
+
 Pythonpad supports users to edit and run Python 3.7 code on static websites based on customized [Brython](http://brython.info/). User's code snippets are transpiled to JavaScript code on the web browser for execution, and tiny on-memory file system supports basic file i/o tasks on the environment. External servers are not needed.
 
 However, accepting standard input in runtime is not supported since there is no equivalent blocking function available in web worker environment of JavaScript. To mitigate this issue, Pythonpad supports standard input in runtime when an external proxy server is available. In this case, one server on the smallest VM in AWS can handle more than 100,000 concurrent users in theory.
